@@ -1,0 +1,41 @@
+# ─── Environment Variables ───────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ─── Node.js ─────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# ─── Build Outputs ───────────────────────────────────
+dist/
+build/
+out/
+coverage/
+.cache/
+
+# ─── Logs ────────────────────────────────────────────
+*.log
+logs/
+*.pid
+*.seed
+*.pid.lock
+
+# ─── OS / Editor Files ───────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ─── k6 ──────────────────────────────────────────────
+*.tmp
+*.out
+*.json
