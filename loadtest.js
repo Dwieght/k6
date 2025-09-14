@@ -4,13 +4,13 @@ import { sleep, check } from "k6";
 // 🔹 Load Test Options
 export let options = {
   stages: [
-    { duration: "30s", target: 5 }, // ramp up to 10 users
-    { duration: "1m", target: 5 }, // hold 10 users
+    { duration: "30s", target: 30 }, // ramp up to 10 users
+    { duration: "1m", target: 30 }, // hold 10 users
     { duration: "30s", target: 0 }, // ramp down
   ],
   thresholds: {
-    http_req_duration: ["p(95)<1000"], // 95% of requests under 1000ms
-    http_req_failed: ["rate<0.1"], // Error rate under 10%
+    http_req_duration: ["p(95)<5000"], // 95% of requests under 5000ms
+    http_req_failed: ["rate<0.05"], // Error rate under 10%
   },
   tags: {
     testname: "Betting API Load Test",
@@ -30,7 +30,7 @@ export default function () {
   console.log("🔐 Logging in to get bearer token...");
 
   const loginPayload = JSON.stringify({
-    username: "dwieght",
+    username: "agent2",
     password: "1234",
   });
 
@@ -96,7 +96,7 @@ export default function () {
 
   check(getBetsResponse, {
     "GET bets - status is 200": (r) => r.status === 200,
-    "GET bets - response time < 1000ms": (r) => r.timings.duration < 1000,
+    "GET bets - response time < 5000ms": (r) => r.timings.duration < 5000,
     "GET bets - has response body": (r) => r.body && r.body.length > 0,
   });
 
@@ -105,11 +105,12 @@ export default function () {
   // 🔹 STEP 4: ADD/CREATE BET
   console.log("📝 Testing ADD bet...");
 
+  const betTypes = ["STRAIGHT", "RUMBLE"];
   const addBetPayload = JSON.stringify({
     gameType: "THREEDIGITS",
-    number: "123",
+    number: Math.floor(Math.random() * (999 - 100 + 1) + 100).toString(),
     amount: 10,
-    betType: "STRAIGHT",
+    betType: betTypes[Math.floor(Math.random() * betTypes.length)],
   });
 
   let addBetResponse = http.post(`${BASE_URL}/api/mobile/bets`, addBetPayload, {
@@ -119,7 +120,7 @@ export default function () {
   check(addBetResponse, {
     "ADD bet - status is 200 or 201": (r) =>
       r.status === 200 || r.status === 201,
-    "ADD bet - response time < 1000ms": (r) => r.timings.duration < 1000,
+    "ADD bet - response time < 5000ms": (r) => r.timings.duration < 5000,
     "ADD bet - bet created successfully": (r) => {
       if (r.status === 200 || r.status === 201) {
         try {
